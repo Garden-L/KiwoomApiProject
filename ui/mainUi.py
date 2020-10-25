@@ -20,11 +20,6 @@ class Ui_MainWindow(object):
         self.stockCBB = QtWidgets.QComboBox(self.centralwidget)
         self.stockCBB.setGeometry(QtCore.QRect(11, 5, 221, 31))
         self.stockCBB.setObjectName("stockCBB")
-        self.charFRM = QtWidgets.QFrame(self.centralwidget)
-        self.charFRM.setGeometry(QtCore.QRect(12, 88, 1001, 431))
-        self.charFRM.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.charFRM.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.charFRM.setObjectName("charFRM")
         self.chartLB = QtWidgets.QLabel(self.centralwidget)
         self.chartLB.setGeometry(QtCore.QRect(13, 50, 61, 31))
         font = QtGui.QFont()
@@ -35,6 +30,12 @@ class Ui_MainWindow(object):
         self.chartLB.setFont(font)
         self.chartLB.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.chartLB.setObjectName("chartLB")
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 80, 1001, 521))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 21))
@@ -47,7 +48,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.stockCBB.activated['QString'].connect(MainWindow.allEvent)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        print(MainWindow)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))

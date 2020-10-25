@@ -1,10 +1,12 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from ui.mainUi import Ui_MainWindow as UIM
 from kiwoom.kiwoom import Kiwoom
 import datetime
-import plotly
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import plotly
 import time
 
 class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
@@ -38,10 +40,25 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
 
         data = self.kiwoom.get_dayChartSearchDataframe()
 
-        print(data,'wlflwi')
-        # fig = plotly.graph_objs.Figure(plotly.graph_objs.Candlestick(x = data['일자'], open=data['시가'], high=data['고가'], low=data['저가'], close=data['종가']))
-        # fig.show()
+        print(data)
 
+        self.fig = plt.Figure()
+        self.canvas = FigureCanvas(self.fig)
+        self.toolbar =NavigationToolbar(self.canvas, self)
+
+        self.verticalLayout.addWidget(self.canvas)
+        self.verticalLayout.addWidget(self.toolbar)
+        print("1")
+
+        ax = self.fig.add_subplot(211)
+        print('2')
+        ax.plot(data.index, data['고가'],label = 'a')
+        ax = self.fig.add_subplot(212)
+        ax.plot(data.index, data['거래량'],label ='b')
+        ax.grid()
+        print('3')
+
+        self.canvas.draw()
 
 if __name__ == "__main__":
     import sys
