@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.gridspec as gridspec
 import matplotlib.ticker as ticker
 import mpl_finance
@@ -39,6 +39,7 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
 
         self.fig = plt.Figure()
         self.canvas = FigureCanvas(self.fig)
+
         self.toolbar = NavigationToolbar(self.canvas, self)
 
         self.verticalLayout.addWidget(self.canvas)
@@ -61,19 +62,28 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
 
         print('2')
         self.ax.xaxis.set_major_formatter(ticker.FixedFormatter(data['일자'].tolist()))
-        num = []
-        for i in range(len(data['일자'].tolist())):
-            num.append(i)
-        self.ax.xaxis.set_major_locator(ticker.FixedLocator(num))
+
+        num = data['일자'].tolist()
+
+
+        def x_date(x,pos):
+            try:
+                return num[int(x-0.5)]
+            except IndexError:
+                return ''
+        self.ax.clear()
+        self.bx.clear()
+        self.ax.set_ylim([0,50000])
+        self.ax.xaxis.set_major_locator(ticker.MaxNLocator(10))
+        self.ax.xaxis.set_major_formatter(ticker.FuncFormatter(x_date))
 
         mpl_finance.candlestick2_ochl(self.ax, data['시가'], data['고가'], data['저가'], data['현재가'], width=0.5, colorup='r', colordown='b')
 
-        self.bx.plot(data.index, data['거래량'], label='b')
+        self.bx.bar(data.index, data['거래량'], label='b')
         self.ax.grid()
         self.bx.grid()
         print('3')
 
-        self.canvas.draw()
 
 if __name__ == "__main__":
     import sys
