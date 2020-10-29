@@ -9,7 +9,6 @@ from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationTo
 import matplotlib.gridspec as gridspec
 import matplotlib.ticker as ticker
 import mpl_finance
-import plotly
 import time
 
 class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
@@ -37,7 +36,7 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
 
         self.stockCBB.addItems(self.kiwoom.jongmokCode)
 
-        self.fig = plt.Figure()
+        self.fig, self.axs = plt.subplots(2,1, sharex=True)
         self.canvas = FigureCanvas(self.fig)
 
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -45,8 +44,6 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
         self.verticalLayout.addWidget(self.canvas)
         self.verticalLayout.addWidget(self.toolbar)
 
-        self.ax = self.fig.add_subplot(211)
-        self.bx = self.fig.add_subplot(212, sharex = self.ax)
         # self.ax.label_outer()
         # self.bx.label_outer()
 
@@ -61,7 +58,7 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
 
 
         print('2')
-        self.ax.xaxis.set_major_formatter(ticker.FixedFormatter(data['일자'].tolist()))
+        self.axs[0].xaxis.set_major_formatter(ticker.FixedFormatter(data['일자'].tolist()))
 
         num = data['일자'].tolist()
 
@@ -71,18 +68,32 @@ class Ui_MainEvent(UIM, QtWidgets.QMainWindow):
                 return num[int(x-0.5)]
             except IndexError:
                 return ''
-        self.ax.clear()
-        self.bx.clear()
-        self.ax.set_ylim([0,50000])
-        self.ax.xaxis.set_major_locator(ticker.MaxNLocator(10))
-        self.ax.xaxis.set_major_formatter(ticker.FuncFormatter(x_date))
+        self.axs[0].clear()
+        self.axs[1].clear()
+        self.axs[0].set_ylim([0,50000])
+        self.axs[0].xaxis.set_major_locator(ticker.MaxNLocator(10))
+        self.axs[1].xaxis.set_major_formatter(ticker.FuncFormatter(x_date))
 
-        mpl_finance.candlestick2_ochl(self.ax, data['시가'], data['고가'], data['저가'], data['현재가'], width=0.5, colorup='r', colordown='b')
+        mpl_finance.candlestick2_ochl(self.axs[0], data['시가'], data['고가'], data['저가'], data['현재가'], width=0.5, colorup='r', colordown='b')
 
-        self.bx.bar(data.index, data['거래량'], label='b')
-        self.ax.grid()
-        self.bx.grid()
+        colors = []
+        j = 0
+        for i in data['거래량'].tolist():
+            if i > 100000:
+                if j %3 == 0:
+                    colors.append("black")
+                else:
+                    colors.append('red')
+                j = j+1
+            else:
+                colors.append("red")
+
+        self.axs[1].bar(data.index, data['거래량'],  label='b', color=colors)
+        self.axs[0].grid()
+        self.axs[1].grid()
         print('3')
+
+        self.canvas.draw()
 
 
 if __name__ == "__main__":
